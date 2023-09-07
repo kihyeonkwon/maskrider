@@ -16,6 +16,7 @@ def signup(request):
             username=request.POST["username"],
             email=request.POST["email"],
             password=request.POST["password"],
+            image=request.FILES.get("image"),
         )
         return redirect("/users/login/")
 
@@ -39,3 +40,11 @@ def logout(request):
     if request.method == "POST":
         auth_logout(request)
         return redirect("/todos/")
+
+
+def profile(request, user_id):
+    user = User.objects.get(id=user_id)
+    todos = user.todo_set.all()
+
+    context = {"user": user, "todos": todos}
+    return render(request, "users/profile.html", context)

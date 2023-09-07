@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
 from todos.models import Todo
@@ -24,13 +25,40 @@ def create(request):
         return redirect("/todos/")
 
 
-def detail(request):
-    pass
+def detail(request, todo_id):
+    if request.method == "GET":
+        todo = Todo.objects.get(id=todo_id)
+        context = {
+            "todo": todo,
+        }
+        return render(request, "todos/detail.html", context)
 
 
-def update(request):
-    pass
+def update(request, todo_id):
+    if request.method == "GET":
+        todo = Todo.objects.get(id=todo_id)
+        context = {
+            "todo": todo,
+        }
+        return render(request, "todos/update.html", context)
+    elif request.method == "POST":
+        todo = Todo.objects.get(id=todo_id)
+        title = request.POST["title"]
+        content = request.POST["content"]
+        print(request.POST.get("is_completed"))
+        is_completed = True if request.POST.get("is_completed") == "on" else False
+        todo.title = title
+        todo.content = content
+        todo.is_completed = is_completed
+        todo.save()
+        return redirect(f"/todos/{todo.id}")
 
 
-def delete(request):
-    pass
+def delete(request, todo_id):
+    if request.method == "POST":
+        todo = Todo.objects.get(id=todo_id)
+        if request.user == todo.user:
+            todo.delete()
+            return redirect("/todos/")
+        else:
+            return HttpResponse("어림도없습니다.")

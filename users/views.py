@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from .models import User
@@ -17,7 +17,7 @@ def signup(request):
             email=request.POST["email"],
             password=request.POST["password"],
         )
-        return HttpResponse("signup post로 요청중")
+        return redirect("/users/login/")
 
 
 def login(request):
@@ -30,6 +30,12 @@ def login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             auth_login(request, user)
-            return HttpResponse("로그인 성공")
+            return redirect("/todos/")
         else:
             return HttpResponse("로그인 실패")
+
+
+def logout(request):
+    if request.method == "POST":
+        auth_logout(request)
+        return redirect("/todos/")

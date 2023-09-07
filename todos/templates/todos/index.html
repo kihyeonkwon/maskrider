@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Index</h1>
+
+    {% if user.is_authenticated %}
+    <p>반갑습니다 {{ user }} 님</p>
+    <a href="/todos/create/">글 작성하기</a>
+
+    <form action="/users/logout/" method="post">
+      {% csrf_token %}
+      <input type="submit" value="로그아웃" />
+    </form>
+
+    {% else %}
+    <a href="/users/login/"> 로그인 하러 가기 </a>
+    <a href="/users/signup/"> 회원가입 하러 가기 </a>
+    {% endif %} {% for todo in todos %}
+
+    <h3>{{ todo.title }}</h3>
+    <p>{{ todo.content }}</p>
+    <p>{{ todo.user }}</p>
+    <p>{{ todo.create_at }}</p>
+    <p>{{ todo.updated_at }}</p>
+
+    {% endfor %}
+  </body>
+</html>
